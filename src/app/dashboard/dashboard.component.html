@@ -1,0 +1,9 @@
+<mat-drawer-container class="example-container" [hasBackdrop]="hasBackdrop" (click)="changed()">
+    <mat-drawer #drawer [mode]="mode" opened={{isOpened}}>
+      <app-side-nav></app-side-nav>
+    </mat-drawer>
+    <mat-drawer-content>
+      <app-header (isOpened)='toggleDrawer($event)' [closed]='isOpened'></app-header>
+      <router-outlet></router-outlet>
+    </mat-drawer-content>
+  </mat-drawer-container>

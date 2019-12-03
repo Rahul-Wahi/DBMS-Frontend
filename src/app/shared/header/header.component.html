@@ -1,0 +1,26 @@
+<mat-toolbar color="primary">
+        <mat-toolbar-row>
+          <!-- <button mat-icon-button>
+            <mat-icon>menu</mat-icon>
+          </button> -->
+          <button mat-icon-button (click)="toggleDrawer()">
+            <mat-icon>menu</mat-icon>
+          </button>
+          <span class="menu-spacer"></span>
+          <h1>Crime Analysis</h1>
+          <span class="menu-spacer"></span>
+          <div>
+              
+     
+      
+          </div>
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+              <button mat-menu-item>
+                <span><button mat-icon-button (click)="logout()"> Logout</button></span>
+              </button>
+            </mat-menu>
+        </mat-toolbar-row>
+</mat-toolbar>
