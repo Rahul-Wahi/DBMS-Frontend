@@ -26,6 +26,7 @@ import { AppComponent } from './app.component';
     RouterModule,
     AppRoutingModule,
     ChartModule
+
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -15,7 +15,6 @@ import { ViewChild } from '@angular/core';
 
 export class HomeComponent implements OnInit {
 
-  
 
   title = 'Crimeanalysis';
   data: any;
@@ -23,8 +22,9 @@ export class HomeComponent implements OnInit {
 
   @ViewChild('map', {static: true}) mapElement: any;
   map: google.maps.Map ;
-  // constructor( private crimedataService: CrimedataService) {
-    constructor( private router: Router) {debugger;
+
+
+    constructor( private router: Router) {
 
     let lookup = {};
     let items = this.crimedata;
@@ -44,9 +44,9 @@ export class HomeComponent implements OnInit {
 
     console.log("aid",Object.keys(lookup));
 
-   
+
     this.data = {
-      
+
       labels: Object.keys(lookup),
       datasets: [
         {
@@ -58,12 +58,15 @@ export class HomeComponent implements OnInit {
       ]
     };
 
+
+
+
   }
 
-  
 
-  
-  ngOnInit(): void {debugger;
+
+
+  ngOnInit(): void {
 
     const mapProperties = {
          center: new google.maps.LatLng(29.651634, -82.324829),
@@ -144,13 +147,13 @@ export class HomeComponent implements OnInit {
     console.log(heatmapData)
 
     this.map = new google.maps.Map(this.mapElement.nativeElement,    mapProperties);
-    
+
     var heatmap = new google.maps.visualization.HeatmapLayer({
       data: heatmapData,
       maxIntensity: 100,
       radius: 40,
       opacity: 1
-    
+
     });
 
     heatmap.setMap(this.map);
@@ -160,5 +163,18 @@ export class HomeComponent implements OnInit {
     }
  }
 
-}
 
+ public onChangeArea(event): void {
+    const newVal = event.target.value;
+    window.alert( newVal + ' area is selected');
+    console.log(newVal);
+  }
+
+  public onChangeCrime(event): void {
+     const newVal = event.target.value;
+     window.alert( 'crime '+ newVal + ' is selected');
+     console.log(newVal);
+   }
+
+
+}
