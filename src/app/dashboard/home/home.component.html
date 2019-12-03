@@ -3,21 +3,27 @@
 <div #map style="text-align: center;width:1515px;padding:10px;height:400px;border:10pxSolidBlack"></div>
 
 <div id="graph">
+  <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="200px">
+      <p-chart class="p-chart-item" type="line" [data]="data" ></p-chart>
+      <p-chart class="p-chart-item" type="line" [data]="crimeTypeData" ></p-chart>
 
-  <div fxLayout="row" fxLayoutGap="20px">
-        <p-chart  type="line" [data]="data" ></p-chart>
-        
   </div>
+  <div fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="200px">
+      <p-chart class="p-chart-item" type="line" [data]="dhirajGraphData" ></p-chart>
+      <p-chart class="p-chart-item" type="line" [data]="data" ></p-chart>
 
-</div><br />
+  </div>
+</div>
+<br />
 
-<select class="dropdown" id="dd">
-    <option value="" selected="selected">Select Area</option>
-    <option value="dps1">Area 1</option>
-    <option value="dps2">Area 2</option>
-    <option value="dps3">Area 3</option>
-    <option value="dps4">Area 4</option>
-    <option value="dps5">Area 5</option>
+<select class="dropdown" id="dd" (change)="onChangeArea($event)">
+    <option value="" selected="selected"  >Select Area</option>
+    <option *ngFor="let area of areas">{{area}} </option> 
+</select>
+
+<select class="dropdown" id="ct" (change)="onChangeCrimeType($event)">
+    <option value="" selected="selected"  >Select Crime Type</option>
+    <option *ngFor="let type of types">{{type}} </option> 
 </select>
 <div id="chartContainer" style="height: 360px; width: 100%;"></div>
 

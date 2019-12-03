@@ -7,3 +7,7 @@
 #map{
     border:1px solid black ;
 }
+
+.p-chart-item {
+    width: 1000px;
+}

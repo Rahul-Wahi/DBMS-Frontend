@@ -7,7 +7,7 @@ import * as dat from '../../../assets/crime_data.json';
 import * as latlong from '../../../assets/lat_long.json';
 import { getLocaleFirstDayOfWeek } from '@angular/common';
 import { ViewChild } from '@angular/core';
-import { NgxDrpOptions, PresetItem, Range } from 'ngx-mat-daterange-picker';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
@@ -16,50 +16,186 @@ import { NgxDrpOptions, PresetItem, Range } from 'ngx-mat-daterange-picker';
 })
 
 export class HomeComponent implements OnInit {
-
   title = 'Crimeanalysis';
   data: any;
   crimedata: any = (dat as any).default ;
-  latlongdata: any = (latlong as any).default ;
+  crimeType: any ;
+  crimeArea: any ;
+  latlongdata: any = (latlong as any).default;
+  lookup = {};
+  types: string[] = [] ;
+  areas: string[] = [] ;
+  crimeTypeData: any ;
+  lookup_crimeType = {};
+  dataChart3: any ;
+  dhirajGraphData: any;
+
+  baseServerURL = 'http://192.168.0.255:8080';
+  apiMap = {areaVsCount: {baseAPI: `${this.baseServerURL}/data/crime/rate`,
+                            changeAPI: 'http://192.168.0.255:8080/data/crime/area/',
+                            lables: undefined,
+                            datasets: [{label: 'Area Wise Crime',
+                            backgroundColor: '#42A5F5', borderColor: '#1E88E5', data: undefined}]
+                          },
+  particultTypeVsCount: {baseAPI: 'http://192.168.0.255:8080/data/crime/rate',
+                            changeAPI: 'http://192.168.0.255:8080/data/crime/type/',
+                            lables: undefined,
+                            datasets: [{label: 'Particular Crime Type Statistics',
+                            backgroundColor: '#42A5F5', borderColor: '#1E88E5', data: undefined}]
+                          },
+  crimeTypeVsMaxArea: {baseAPI: 'http://192.168.0.255:8080/data/crimetype/maxarea',
+                        lables: undefined,
+                        datasets: [{label: 'Areas with Max Crime Type Statistics',
+                        backgroundColor: '#42A5F5', borderColor: '#1E88E5', data: undefined}]
+                      }
+            };
 
   @ViewChild('map', {static: true}) mapElement: any;
   map: google.maps.Map ;
   // constructor( private crimedataService: CrimedataService) {
-    constructor( private router: Router) {debugger;
+    constructor( private router: Router, private http: HttpClient) {
+      this.http.get('http://192.168.0.255:8080/data/crime/rate')
+      .subscribe(data => {
+        this.crimedata = data;
+        this.processAPIData();
+        this.processAPIData2() ;
+      }); 
 
-    let lookup = {};
-    let items = this.crimedata;
-    let result = [];
+    
 
-    for (let item, i = 0; item = items[i++];) {
-      let name = item.a_id;
+      this.http.get('http://192.168.0.255:8080/data/crimetype')
+      .subscribe(data => {
+        this.crimeType = data;
+        this.processCrimeType();
+      });
 
-      if (!(name in lookup)) {
-        lookup[name] = 1;
-        result.push(name);
-      }else{
-        lookup[name]++;
-      }
-    }
+      this.http.get('http://192.168.0.255:8080/data/area')
+      .subscribe(data => {
+        this.crimeArea = data;
+        this.processArea();
+      });
 
-    console.log("aid",Object.keys(lookup));
+      this.http.get('http://192.168.0.255:8080/data/crimetype/maxarea')
+      .subscribe(data => {
+        this.processDhirajChart(data);
+      });
 
-    this.data = {
+      /*
+      this.http.get('http://192.168.0.255:8080/data/crime/rate')
+      .subscribe(data => {
+        this.crimedata = data;
+        this.processAPIData();
+      });
       
+      */
+  }
+
+  processDhirajChart(data) {
+    const lookup = {}
+    for (const eachCrimDataItem of data) {
+      lookup[eachCrimDataItem.ctype] = eachCrimDataItem.maxFreq;
+    }
+    this.dhirajGraphData = {
       labels: Object.keys(lookup),
       datasets: [
         {
-          label: 'Area Wise Crime',
+          label: 'Max crime type area',
           backgroundColor: '#42A5F5',
           borderColor: '#1E88E5',
           data: Object.values(lookup)
         }
       ]
     };
-
+    console.log(this.dhirajGraphData);
+  this.lookup = {};
+  }
+  processAPIData(): void {
+    for (const eachCrimDataItem of this.crimedata) {
+      this.lookup[eachCrimDataItem.year] = eachCrimDataItem.crimeCount;
+    }
+    this.data = {
+      labels: Object.keys(this.lookup),
+      datasets: [
+        {
+          label: 'Area Wise Crime',
+          backgroundColor: '#42A5F5',
+          borderColor: '#1E88E5',
+          data: Object.values(this.lookup)
+        }
+      ]
+    };
+    console.log(this.data);
   }
 
-  ngOnInit(): void {debugger;
+  processAPIData2(): void {
+    for (const eachCrimDataItem of this.crimedata) {
+      this.lookup_crimeType[eachCrimDataItem.year] = eachCrimDataItem.crimeCount;
+    }
+    this.crimeTypeData = {
+      labels: Object.keys(this.lookup),
+      datasets: [
+        {
+          label: 'CrimeType Wise Crime',
+          backgroundColor: '#42A5F5',
+          borderColor: '#1E88E5',
+          data: Object.values(this.lookup)
+        }
+      ]
+    };
+
+    this.lookup_crimeType = {}
+  }
+
+  processAPIData_chart2(): void {
+    for (const eachCrimDataItem of this.crimedata) {
+      this.lookup_crimeType[eachCrimDataItem.year] = eachCrimDataItem.crimeCount;
+    }
+    this.crimeTypeData = {
+      labels: Object.keys(this.lookup),
+      datasets: [
+        {
+          label: 'CrimeType Wise Crime',
+          backgroundColor: '#42A5F5',
+          borderColor: '#1E88E5',
+          data: Object.values(this.lookup)
+        }
+      ]
+    };
+
+    this.lookup_crimeType = {}
+  }
+
+    processCrimeType(): void {
+      for (const eachCrimTypeItem of this.crimeType) {
+       this.types.push(eachCrimTypeItem.crimeType) ;
+      }
+    }
+
+    processArea(): void {
+        for (const eachCrimAreaItem of this.crimeArea) {
+          this.areas.push(eachCrimAreaItem.street_address) ;
+        }
+      }
+
+      public onChangeArea(event): void {
+          this.http.get(`http://192.168.0.255:8080/data/crime/area/${event.target.value}`)
+          .subscribe(data => {
+            this.crimedata = data;
+            this.processAPIData();
+          });
+      }
+
+      public onChangeCrimeType(event): void {
+        this.http.get(`http://192.168.0.255:8080/data/crime/type/${event.target.value}`)
+        .subscribe(data => {
+          this.crimedata = data;
+          this.processAPIData_chart2();
+        });
+    }
+
+      
+
+  ngOnInit(): void {
 
     const mapProperties = {
          center: new google.maps.LatLng(29.651634, -82.324829),
@@ -67,15 +203,15 @@ export class HomeComponent implements OnInit {
          mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
-    debugger;
+    
     var newdata = this.latlongdata;
-    debugger;
+ 
     console.log(newdata)
 
     let lookup = {};
     let items = this.latlongdata;
     let result = [];
-    var heatmapData = [];
+    let heatmapData = [];
 
     for (let item, i = 0; item = items[i++];) {
       let lat = item.Latitude;
@@ -100,8 +236,5 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/authenticator/login']);
     }
  }
-
- 
-
 }
 
