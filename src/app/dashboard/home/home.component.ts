@@ -4,8 +4,10 @@ import {} from 'googlemaps';
 import { Router } from '@angular/router';
 import { CrimedataService } from '../../shared/crimedata.service';
 import * as dat from '../../../assets/crime_data.json';
+import * as latlong from '../../../assets/lat_long.json';
 import { getLocaleFirstDayOfWeek } from '@angular/common';
 import { ViewChild } from '@angular/core';
+import { NgxDrpOptions, PresetItem, Range } from 'ngx-mat-daterange-picker';
 
 @Component({
   selector: 'app-home',
@@ -15,11 +17,10 @@ import { ViewChild } from '@angular/core';
 
 export class HomeComponent implements OnInit {
 
-  
-
   title = 'Crimeanalysis';
   data: any;
   crimedata: any = (dat as any).default ;
+  latlongdata: any = (latlong as any).default ;
 
   @ViewChild('map', {static: true}) mapElement: any;
   map: google.maps.Map ;
@@ -41,10 +42,8 @@ export class HomeComponent implements OnInit {
       }
     }
 
-
     console.log("aid",Object.keys(lookup));
 
-   
     this.data = {
       
       labels: Object.keys(lookup),
@@ -60,9 +59,6 @@ export class HomeComponent implements OnInit {
 
   }
 
-  
-
-  
   ngOnInit(): void {debugger;
 
     const mapProperties = {
@@ -71,75 +67,21 @@ export class HomeComponent implements OnInit {
          mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
-    var heatmapData = [
-      {location: new google.maps.LatLng(29.656589,	-82.33397), weight: 1000},
-      {location: new google.maps.LatLng(29.656589,	-82.33397), weight: 1000},
-      {location: new google.maps.LatLng(29.656589,	-82.33397), weight: 0.5},
-      new google.maps.LatLng(29.656589,	-82.33397),
-      new google.maps.LatLng(29.644885,	-82.333668),
-      new google.maps.LatLng(29.659725,	-82.419549),
-      new google.maps.LatLng(29.657403,	-82.304024),
-      new google.maps.LatLng(29.659683,	-82.409945),
-      new google.maps.LatLng(29.659423,	-82.329994),
-      new google.maps.LatLng(29.6487	,-82.322372),
-      new google.maps.LatLng(29.645736,	-82.336059),
-      new google.maps.LatLng(29.620272,	-82.372798),
-      new google.maps.LatLng(29.708614,	-82.359993),
-      new google.maps.LatLng(29.659205,	-82.303291),
-      new google.maps.LatLng(29.634198,	-82.373635),
-      new google.maps.LatLng(29.668174,	-82.301451),
-      new google.maps.LatLng(29.679854,	-82.288972),
-      new google.maps.LatLng(29.625261,	-82.38359),
-      new google.maps.LatLng(29.67824	,-82.303909),
-      new google.maps.LatLng(29.656589,	-82.33397),
-      new google.maps.LatLng(29.644885,	-82.333668),
-      new google.maps.LatLng(29.659725,	-82.419549),
-      new google.maps.LatLng(29.657403,	-82.304024),
-      new google.maps.LatLng(29.659683,	-82.409945),
-      new google.maps.LatLng(29.659423,	-82.329994),
-      new google.maps.LatLng(29.6487	,-82.322372),
-      new google.maps.LatLng(29.645736,	-82.336059),
-      new google.maps.LatLng(29.620272,	-82.372798),
-      new google.maps.LatLng(29.708614,	-82.359993),
-      new google.maps.LatLng(29.659205,	-82.303291),
-      new google.maps.LatLng(29.634198,	-82.373635),
-      new google.maps.LatLng(29.668174,	-82.301451),
-      new google.maps.LatLng(29.679854,	-82.288972),
-      new google.maps.LatLng(29.625261,	-82.38359),
-      new google.maps.LatLng(29.67824	,-82.303909),
-      new google.maps.LatLng(29.656589,	-82.33397),
-      new google.maps.LatLng(29.644885,	-82.333668),
-      new google.maps.LatLng(29.659725,	-82.419549),
-      new google.maps.LatLng(29.657403,	-82.304024),
-      new google.maps.LatLng(29.659683,	-82.409945),
-      new google.maps.LatLng(29.659423,	-82.329994),
-      new google.maps.LatLng(29.6487	,-82.322372),
-      new google.maps.LatLng(29.645736,	-82.336059),
-      new google.maps.LatLng(29.620272,	-82.372798),
-      new google.maps.LatLng(29.708614,	-82.359993),
-      new google.maps.LatLng(29.659205,	-82.303291),
-      new google.maps.LatLng(29.634198,	-82.373635),
-      new google.maps.LatLng(29.668174,	-82.301451),
-      new google.maps.LatLng(29.679854,	-82.288972),
-      new google.maps.LatLng(29.625261,	-82.38359),
-      new google.maps.LatLng(29.67824	,-82.303909),
-      new google.maps.LatLng(29.656589,	-82.33397),
-      new google.maps.LatLng(29.644885,	-82.333668),
-      new google.maps.LatLng(29.659725,	-82.419549),
-      new google.maps.LatLng(29.657403,	-82.304024),
-      new google.maps.LatLng(29.659683,	-82.409945),
-      new google.maps.LatLng(29.659423,	-82.329994),
-      new google.maps.LatLng(29.6487	,-82.322372),
-      new google.maps.LatLng(29.645736,	-82.336059),
-      new google.maps.LatLng(29.620272,	-82.372798),
-      new google.maps.LatLng(29.708614,	-82.359993),
-      new google.maps.LatLng(29.659205,	-82.303291),
-      new google.maps.LatLng(29.634198,	-82.373635),
-      new google.maps.LatLng(29.668174,	-82.301451),
-      new google.maps.LatLng(29.679854,	-82.288972),
-      new google.maps.LatLng(29.625261,	-82.38359),
-      new google.maps.LatLng(29.67824	,-82.303909)
-    ];
+    debugger;
+    var newdata = this.latlongdata;
+    debugger;
+    console.log(newdata)
+
+    let lookup = {};
+    let items = this.latlongdata;
+    let result = [];
+    var heatmapData = [];
+
+    for (let item, i = 0; item = items[i++];) {
+      let lat = item.Latitude;
+      let long = item.Longitude;
+      heatmapData.push(new google.maps.LatLng(lat, long))
+    }
 
     console.log(heatmapData)
 
@@ -148,9 +90,8 @@ export class HomeComponent implements OnInit {
     var heatmap = new google.maps.visualization.HeatmapLayer({
       data: heatmapData,
       maxIntensity: 100,
-      radius: 40,
+      radius: 10,
       opacity: 1
-    
     });
 
     heatmap.setMap(this.map);
@@ -159,6 +100,8 @@ export class HomeComponent implements OnInit {
       this.router.navigate(['/authenticator/login']);
     }
  }
+
+ 
 
 }
 
